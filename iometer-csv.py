@@ -3,7 +3,7 @@ from os.path import join
 import configparser
 import csv
 
-CONF = 'iometer_csv_parser.ini'
+CONF = 'iometer_csv_parser.ini' # add the folders to be scanned in this configuration file 
 cfg = configparser.ConfigParser()
 cfg.read(CONF, 'utf8')
 folders = cfg.get('Scan', 'ScanFolder').split(';')
