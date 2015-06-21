@@ -3,18 +3,26 @@ from os.path import join
 import configparser
 import csv
 
-CONF = 'iometer_csv_parser.ini' # add the folders to be scanned in this configuration file 
-cfg = configparser.ConfigParser()
-cfg.read(CONF, 'utf8')
-folders = cfg.get('Scan', 'ScanFolder').split(';')
-
+CONF = 'iometer_csv_parser.ini'
+folders = []
 result_dict = []
+
+# If exists the configuration file, scan those folders in the config file. Otherwise, scan local. 
+if os.path.isfile(CONF):
+    cfg = configparser.ConfigParser()
+    cfg.read(CONF, 'utf8')
+    folders = cfg.get('Scan', 'ScanFolder').split(';')
+else:
+    folders.append(".")
+
 for folder in folders:
-    test_name = os.path.basename(folder)  # extract Test Name from the folder name
+    #test_name = os.path.basename(folder)  # extract Test Name from the folder name
     for (dirname, dirs, files) in os.walk(folder):
         for filename in files:
             if filename.endswith('csv'):
+                print("Parsing file: %s" % os.path.join(dirname, filename))
                 vmname = filename.split(".")[0][8:]    # extract VM name from the file name
+                test_name = dirname # use dirname as test name
                 csv_content = []
                 for row in csv.reader(open(os.path.join(dirname, filename)), delimiter=",", skipinitialspace=True):    # put CSV content in a big list
                     csv_content.append(row)
